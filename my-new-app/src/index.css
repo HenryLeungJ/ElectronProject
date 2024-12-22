@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+}
+
+.simple-keyboard .hg-button {
+  background: transparent;
+  border: 2px solid #ccc; /* Key outline color */
+  color: transparent; /* Hides key labels */
+  box-shadow: none;
+}
