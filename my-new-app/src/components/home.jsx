@@ -4,16 +4,54 @@ import "react-simple-keyboard/build/css/index.css";
 
 const home = () => {
   const [count, setCount] = useState(0);
+  const [phrase, setPhrase] = useState("");
+
+  var shift = false;
 
   const onKeyPress = (event) => {
-    console.log(String.fromCharCode(event.keyCode));
+    if (event.keyCode == 16) {
+      return;
+    }
+    if (shift) {
+      setPhrase(
+        (prev) => prev + String.fromCharCode(event.keyCode).toUpperCase()
+      );
+    } else {
+      setPhrase(
+        (prev) => prev + String.fromCharCode(event.keyCode).toLowerCase()
+      );
+    }
     setCount(event.keyCode);
   };
+
+  const changeShift = (event) => {
+    if (!(event.keyCode == 16)) {
+      return;
+    }
+    console.log(event.keyCode);
+    if (!shift && event.type == "keydown") {
+      shift = true;
+    } else if (shift && event.type == "keyup") {
+      shift = false;
+    }
+  };
+
+  const handleKeyPress = async (event) => {
+    if (event.type == "keyup") {
+      changeShift(event);
+    } else {
+      await onKeyPress(event);
+      await changeShift(event);
+    }
+  };
+
   useEffect(() => {
-    document.addEventListener("keydown", onKeyPress);
+    document.addEventListener("keyup", handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress);
 
     return () => {
-      document.removeEventListener("keydown", onKeyPress);
+      document.removeEventListener("keyup", handleKeyPress);
+      document.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
 
@@ -35,11 +73,16 @@ const home = () => {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>{count}</p>
-        <Keyboard physicalKeyboardHighlight="true" layout={newLayout} />
-      </header>
+    <div className="App h-[100vh]">
+      <div className="flex flex-col h-[100%] justify-center items-end">
+        <p className="absolute top-4">
+          WPM{" "}
+          <strong>
+            {phrase} {count}
+          </strong>
+        </p>
+        <Keyboard physicalKeyboardHighlight={true} layout={newLayout} />
+      </div>
     </div>
   );
 };
