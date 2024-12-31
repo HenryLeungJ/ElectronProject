@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Keyboard from "react-simple-keyboard";
-import "react-simple-keyboard/build/css/index.css";
+import Keyboard from "./keyboard.jsx";
 
 const home = () => {
   const [count, setCount] = useState(0);
@@ -60,23 +59,6 @@ const home = () => {
     };
   }, []);
 
-  const newLayout = {
-    default: [
-      "` 1 2 3 4 5 6 7 8 9 0 - = {backspace}",
-      "{tab} q w e r t y u i o p [ ] \\",
-      "{capslock} a s d f g h j k l ; ' {enter}",
-      "{shiftleft} z x c v b n m , . / {shiftright}",
-      "{space}",
-    ],
-    shift: [
-      "~ ! @ # $ % ^ &amp; * ( ) _ + {backspace}",
-      "{tab} Q W E R T Y U I O P { } |",
-      '{lock} A S D F G H J K L : " {enter}',
-      "{shiftleft} Z X C V B N M &lt; &gt; ? {shiftright}",
-      ".com @ {space}",
-    ],
-  };
-
   return (
     <div className="App h-[100vh]">
       <div className="flex flex-col h-[100%] justify-center items-end">
@@ -86,7 +68,7 @@ const home = () => {
             {phrase} {count}
           </strong>
         </p>
-        <Keyboard physicalKeyboardHighlight={true} layout={newLayout} />
+        <Keyboard />
       </div>
     </div>
   );
