@@ -8,6 +8,10 @@ const home = () => {
 
   var shift = false;
 
+  const generateQuote = async () => {
+    setPhrase(await window.electronAPI.getQuote());
+  };
+
   const onKeyPress = (event) => {
     if (event.keyCode == 16) {
       return;
@@ -46,6 +50,7 @@ const home = () => {
   };
 
   useEffect(() => {
+    generateQuote();
     document.addEventListener("keyup", handleKeyPress);
     document.addEventListener("keydown", handleKeyPress);
 
