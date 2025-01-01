@@ -3,7 +3,6 @@ import Keyboard from "./keyboard.jsx";
 import compare from "../util/compareStrings.jsx";
 
 const home = () => {
-  const [count, setCount] = useState(0);
   const [phrase, setPhrase] = useState("");
   const [finishedPhrase, setFinishedPhrase] = useState("");
   const [ended, setEnded] = useState(false);
@@ -16,6 +15,13 @@ const home = () => {
   let startTime;
   let endTime;
   let started = false;
+
+  const restartOperation = () => {
+    setPhrase("");
+    setFinishedPhrase("");
+    setEnded(false);
+    setWPM(0);
+  };
 
   const changePhrase = (s) => {
     phraseMut = s;
@@ -36,6 +42,9 @@ const home = () => {
   const onKeyPress = (event) => {
     if (event.keyCode == 16) {
       return;
+    } else if (shift && event.keyCode == 13) {
+      window.location.reload();
+      restartOperation();
     } else if (compare(phraseMut, event.keyCode, shift)) {
       if (!started) {
         started = true;
@@ -65,12 +74,12 @@ const home = () => {
     }
   };
 
-  const handleKeyPress = async (event) => {
+  const handleKeyPress = (event) => {
     if (event.type == "keyup") {
       changeShift(event);
     } else {
-      await onKeyPress(event);
-      await changeShift(event);
+      onKeyPress(event);
+      changeShift(event);
     }
   };
 
