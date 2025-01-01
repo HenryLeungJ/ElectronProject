@@ -1,28 +1,38 @@
 import React, { useState, useEffect } from "react";
 import Keyboard from "./keyboard.jsx";
+import compare from "../util/compareStrings.jsx";
 
 const home = () => {
   const [count, setCount] = useState(0);
   const [phrase, setPhrase] = useState("");
+  const [finishedPhrase, setFinishedPhrase] = useState("");
 
+  var phraseMut = "";
+  var finishedPhraseMut = "";
   var shift = false;
 
+  const changePhrase = (s) => {
+    phraseMut = s;
+    setPhrase(s);
+  };
+  const changeFinishedPhrase = (s) => {
+    finishedPhraseMut = s;
+    setFinishedPhrase(s);
+  };
+
   const generateQuote = async () => {
-    setPhrase(await window.electronAPI.getQuote());
+    changePhrase(await window.electronAPI.getQuote());
   };
 
   const onKeyPress = (event) => {
     if (event.keyCode == 16) {
       return;
+    } else if (compare(phraseMut, event.keyCode, shift)) {
+      changeFinishedPhrase(finishedPhraseMut + phraseMut[0]);
+      changePhrase(phraseMut.slice(1));
     }
-    if (shift) {
-      setPhrase(
-        (prev) => prev + String.fromCharCode(event.keyCode).toUpperCase()
-      );
-    } else {
-      setPhrase(
-        (prev) => prev + String.fromCharCode(event.keyCode).toLowerCase()
-      );
+    if (event.keyCode == 32 && event.target == document.body) {
+      event.preventDefault();
     }
     setCount(event.keyCode);
   };
@@ -31,7 +41,6 @@ const home = () => {
     if (!(event.keyCode == 16)) {
       return;
     }
-    console.log(event.keyCode);
     if (!shift && event.type == "keydown") {
       shift = true;
     } else if (shift && event.type == "keyup") {
@@ -62,11 +71,10 @@ const home = () => {
   return (
     <div className="App h-[100vh]">
       <div className="flex flex-col h-[100%] justify-center items-end">
-        <p className="absolute top-4">
-          WPM{" "}
-          <strong>
-            {phrase} {count}
-          </strong>
+        <p className="absolute top-4">WPM {count}</p>
+        <p>
+          <strong>{finishedPhrase}</strong>
+          {phrase}
         </p>
         <Keyboard />
       </div>
