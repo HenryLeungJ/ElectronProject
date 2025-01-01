@@ -6,10 +6,16 @@ const home = () => {
   const [count, setCount] = useState(0);
   const [phrase, setPhrase] = useState("");
   const [finishedPhrase, setFinishedPhrase] = useState("");
+  const [ended, setEnded] = useState(false);
+  const [WPM, setWPM] = useState(0);
 
   var phraseMut = "";
   var finishedPhraseMut = "";
   var shift = false;
+  var len = 0;
+  let startTime;
+  let endTime;
+  let started = false;
 
   const changePhrase = (s) => {
     phraseMut = s;
@@ -21,20 +27,31 @@ const home = () => {
   };
 
   const generateQuote = async () => {
-    changePhrase(await window.electronAPI.getQuote());
+    const quote = await window.electronAPI.getQuote();
+    changePhrase(quote);
+    len = quote.split(" ").length;
+    console.log(len);
   };
 
   const onKeyPress = (event) => {
     if (event.keyCode == 16) {
       return;
     } else if (compare(phraseMut, event.keyCode, shift)) {
+      if (!started) {
+        started = true;
+        startTime = new Date();
+      }
       changeFinishedPhrase(finishedPhraseMut + phraseMut[0]);
       changePhrase(phraseMut.slice(1));
+      if (phraseMut.length == 0) {
+        setEnded(true);
+        endTime = new Date();
+        setWPM(len / ((endTime - startTime) / 60000));
+      }
     }
     if (event.keyCode == 32 && event.target == document.body) {
       event.preventDefault();
     }
-    setCount(event.keyCode);
   };
 
   const changeShift = (event) => {
@@ -71,12 +88,18 @@ const home = () => {
   return (
     <div className="App h-[100vh]">
       <div className="flex flex-col h-[100%] justify-center items-end">
-        <p className="absolute top-4">WPM {count}</p>
-        <p>
-          <strong>{finishedPhrase}</strong>
-          {phrase}
-        </p>
-        <Keyboard />
+        <p className="absolute top-4">Press Shift + Enter to Restart</p>
+        {!ended ? (
+          <>
+            <p>
+              <strong>{finishedPhrase}</strong>
+              {phrase}
+            </p>
+            <Keyboard />
+          </>
+        ) : (
+          <h1 className="bold text-xl">{WPM}</h1>
+        )}
       </div>
     </div>
   );

@@ -11,6 +11,8 @@ export default function compare(s, c, uppercase) {
     c2 = '"'.charCodeAt(0);
   } else if (c == 222) {
     c2 = "'".charCodeAt(0);
+  } else if (c == 189) {
+    c2 = "-".charCodeAt(0);
   }
   return c1 == c2;
 }

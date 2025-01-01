@@ -5,9 +5,3 @@ const { contextBridge, ipcRenderer } = require("electron/renderer");
 contextBridge.exposeInMainWorld("electronAPI", {
   getQuote: () => ipcRenderer.invoke("getQuote"),
 });
-
-window.addEventListener("keydown", function (e) {
-  if (e.keyCode == 32 && e.target == document.body) {
-    e.preventDefault();
-  }
-});
